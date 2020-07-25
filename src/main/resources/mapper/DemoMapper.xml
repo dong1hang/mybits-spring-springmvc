@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crm.dao.DemoDao">
+
+	<sql id="querywhere">
+		<where>
+			<if test="custName!=null and custName!=''">cust_name LIKE '%${custName}%'</if>
+			<if test="custSource!=null and custSource!=''">AND cust_source =#{custSource} </if>
+			<if test="custIndustry!=null and custIndustry!=''">AND cust_industry =#{custIndustry}</if>
+			<if test="custLevel!=null and custLevel!=''">AND cust_level = #{custLevel}</if>
+		</where>
+	</sql>
+	
+	<select id="getBaseType" resultType="baseDict"
+		parameterType="string">
+		SELECT
+		dict_id,
+		dict_type_code,
+		dict_type_name,
+		dict_item_name,
+		dict_item_code,
+		dict_sort,
+		dict_enable,
+		dict_memo
+		FROM
+		base_dict
+		WHERE
+		dict_type_code = #{value};
+	</select>
+
+	
+	<select id="getTotalRecords" parameterType="QueryVo"
+		resultType="int">
+		SELECT
+		count( * )
+		FROM
+		customer
+		<include refid="querywhere" />
+	</select>
+	<!-- 顧客情報 -->
+	<select id="getAllCusts" resultType="Customer">
+		SELECT
+		c.`cust_id`,
+		c.`cust_name`,
+		c.`cust_user_id`,
+		c.`cust_create_id`,
+		s.`dict_item_name` `cust_source`,
+		i.`dict_item_name` `cust_industry`,
+		l.`dict_item_name` `cust_level`,
+		c.`cust_linkman`,
+		c.`cust_phone`,
+		c.`cust_mobile`,
+		c.`cust_zipcode`,
+		c.`cust_address`,
+		c.`cust_createtime`
+		FROM `customer` c
+		LEFT JOIN base_dict s ON c.`cust_source`= s.`dict_id`
+		LEFT JOIN base_dict i ON c.`cust_industry` = i.`dict_id`
+		LEFT JOIN
+		base_dict l ON c.`cust_level` = l.`dict_id`
+		ORDER BY cust_id 
+	</select>
+	
+	<select id="getCustomerById" parameterType="int"
+		resultType="customer">
+		SELECT
+		*
+		FROM
+		customer
+		WHERE
+		cust_id = #{id}
+	</select>
+
+	
+	<update id="update" parameterType="customer">
+		UPDATE customer
+		<set> 
+			cust_name =#{custName},
+			cust_user_id =#{custUserId},
+			cust_create_id =#{custCreateId},
+			cust_source =#{custSource},
+			cust_industry =#{custIndustry},
+			cust_level =#{custLevel},
+			cust_linkman =#{custLinkman},
+			cust_phone =#{custPhone},
+			cust_mobile =#{custMobile},
+			cust_zipcode =#{custZipcode},
+			cust_address =#{custAddress},
+			cust_createtime =#{custCreatetime}
+		</set>
+		WHERE
+		cust_id =#{custId}
+	</update>
+	
+	<delete id="deleteById" parameterType="int">
+		delete from customer where cust_id = #{id}
+	</delete>
+	
+	<insert id="insert" parameterType="customer">
+		insert into customer values(
+			#{custId},
+			#{custName},
+			#{custUserId},
+			#{custCreateId},
+			#{custSource},
+			#{custIndustry},
+			#{custLevel},
+			#{custLinkman},
+			#{custPhone},
+			#{custMobile},
+			#{custZipcode},
+			#{custAddress},
+			#{custCreatetime}
+		)
+		
+	</insert>
+</mapper>
