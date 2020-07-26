@@ -4,4 +4,4 @@
     DB：mysql
     開発ツール：eclipse
     localhost:8080/crm/demo/list
-    ![](https://github.com/dong1hang/mybits-spring-springmvc/tree/master/src/main/webapp/img)
+![image](https://github.com/dong1hang/mybits-spring-springmvc/blob/master/src/main/webapp/img/index.jpg)
